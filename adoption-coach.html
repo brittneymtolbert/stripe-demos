@@ -1,0 +1,447 @@
+<title>Marketing Adoption Coach</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a working console. Coach channel left, adoption journey right, leadership + human queue below. */
+:root {
+  --bg: #f3f5f4;
+  --panel: #ffffff;
+  --ink: #15211f;
+  --muted: #5b6b67;
+  --line: #dbe2df;
+  --accent: #0f7a66;
+  --accent-soft: #e1f2ee;
+  --bot: #f6f9f8;
+  --warn: #a35c00;
+  --warn-soft: #fbefdc;
+  --good: #1f7a3a;
+  --s0: #c9d3d0; --s1: #9fcfc3; --s2: #5fb3a0; --s3: #2a937c; --s4: #0f6b58;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f1514; --panel: #171f1e; --ink: #e6eeec; --muted: #9aaba6; --line: #2a3533;
+  --accent: #4cc5a8; --accent-soft: #1a2f2a; --bot: #1c2625; --warn: #f0b15a; --warn-soft: #33281a; --good: #6fcf8c;
+  --s0: #3a4643; --s1: #2f5a50; --s2: #2f7d6b; --s3: #3aa58b; --s4: #5cd0b2; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0f1514; --panel: #171f1e; --ink: #e6eeec; --muted: #9aaba6; --line: #2a3533;
+  --accent: #4cc5a8; --accent-soft: #1a2f2a; --bot: #1c2625; --warn: #f0b15a; --warn-soft: #33281a; --good: #6fcf8c;
+  --s0: #3a4643; --s1: #2f5a50; --s2: #2f7d6b; --s3: #3aa58b; --s4: #5cd0b2; color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1200px; margin: 0 auto; padding-block: 28px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 20px; }
+h1, h2, h3 { font-family: var(--display); margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+h1 { font-size: clamp(1.7rem, 3.5vw, 2.4rem); }
+h2 { font-size: 1.15rem; }
+.eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+header { display: grid; gap: 8px; }
+header p { margin: 0; max-width: 68ch; color: var(--muted); }
+.meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; font-size: 0.85rem; color: var(--muted); }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); font-size: 0.8rem; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+.pill.live .dot { background: var(--good); }
+
+.grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 20px; }
+.grid2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 20px; }
+@media (max-width: 880px) { .grid, .grid2 { grid-template-columns: minmax(0, 1fr); } }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; display: grid; min-width: 0; }
+.panel-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+.panel-head .sub { font-size: 0.82rem; color: var(--muted); }
+.panel-body { padding: 14px 16px; display: grid; gap: 12px; min-width: 0; }
+
+/* Channel */
+.channel { grid-template-rows: auto 1fr auto; max-height: 640px; }
+.feed { overflow-y: auto; padding: 14px 16px; display: grid; gap: 14px; align-content: start; min-height: 320px; }
+.msg { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 10px; }
+.avatar { width: 34px; height: 34px; border-radius: 8px; display: grid; place-items: center; font-weight: 600; font-size: 0.8rem; background: var(--accent-soft); color: var(--accent); }
+.msg.bot .avatar { background: var(--accent); color: var(--panel); font-family: var(--mono); }
+.who { font-weight: 600; font-size: 0.88rem; }
+.who span { font-weight: 400; color: var(--muted); font-size: 0.78rem; margin-left: 6px; }
+.text { white-space: pre-wrap; overflow-wrap: anywhere; }
+.msg.bot .text { background: var(--bot); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin-top: 4px; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.tag { font-family: var(--mono); font-size: 0.7rem; padding: 2px 8px; border-radius: 4px; background: var(--accent-soft); color: var(--accent); }
+.tag.warn { background: var(--warn-soft); color: var(--warn); }
+.tag.good { background: var(--accent-soft); color: var(--good); }
+.composer { border-top: 1px solid var(--line); padding: 12px 16px; display: grid; gap: 10px; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip { font: inherit; font-size: 0.8rem; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); cursor: pointer; }
+.chip:hover { border-color: var(--accent); }
+label { font-size: 0.82rem; color: var(--muted); }
+select, textarea, input[type=text] { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+textarea { width: 100%; resize: vertical; min-height: 44px; }
+.send { display: flex; gap: 8px; }
+.send textarea { flex: 1; min-width: 0; }
+button.primary { font: inherit; font-weight: 600; padding: 8px 16px; border-radius: 8px; border: 0; background: var(--accent); color: var(--panel); cursor: pointer; }
+button.ghost { font: inherit; font-size: 0.85rem; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--line); background: var(--panel); color: var(--ink); cursor: pointer; }
+button:disabled { opacity: 0.55; cursor: wait; }
+button:focus-visible, .chip:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Journey */
+.stages { display: grid; gap: 10px; }
+.stage { display: grid; grid-template-columns: 132px minmax(0, 1fr); gap: 10px; align-items: start; }
+.stage-name { display: grid; gap: 2px; }
+.stage-name b { font-size: 0.86rem; }
+.stage-name small { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); }
+.bar { height: 4px; border-radius: 2px; margin-top: 4px; }
+.people { display: flex; flex-wrap: wrap; gap: 6px; min-height: 30px; }
+.person { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px 3px 4px; border: 1px solid var(--line); border-radius: 999px; font-size: 0.8rem; background: var(--panel); }
+.person i { font-style: normal; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 0.66rem; font-weight: 600; background: var(--accent-soft); color: var(--accent); }
+.person.stuck { border-color: var(--warn); }
+.person.moved { animation: pop 0.9s ease; }
+@keyframes pop { 0% { box-shadow: 0 0 0 0 var(--accent); } 100% { box-shadow: 0 0 0 8px transparent; } }
+@media (prefers-reduced-motion: reduce) { .person.moved { animation: none; } }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+@media (max-width: 520px) { .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .stage { grid-template-columns: minmax(0, 1fr); } }
+.stat { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+.stat b { display: block; font-family: var(--display); font-size: 1.4rem; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 0.75rem; color: var(--muted); }
+
+/* Queue + summary */
+.q { border: 1px solid var(--line); border-left: 3px solid var(--warn); border-radius: 8px; padding: 10px 12px; display: grid; gap: 8px; }
+.q p { margin: 0; }
+.q small { color: var(--muted); }
+.empty { color: var(--muted); font-size: 0.88rem; }
+.summary { white-space: pre-wrap; background: var(--bot); border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; font-size: 0.92rem; min-height: 120px; overflow-wrap: anywhere; }
+.note { font-size: 0.8rem; color: var(--muted); }
+.how { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 880px) { .how { grid-template-columns: minmax(0, 1fr); } }
+.how div { display: grid; gap: 4px; }
+.how b { font-family: var(--display); }
+.how p { margin: 0; font-size: 0.88rem; color: var(--muted); }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Demo · Larkspur Marketing · example data</div>
+    <h1>Marketing Adoption Coach</h1>
+    <p>An AI coach embedded with a cohort of marketers. It answers "how do I use AI for this?" in the team channel, tracks where each person is on the adoption journey, routes what it can't answer to a human, and turns those answers into new playbooks. Every Friday it briefs leadership.</p>
+    <div class="meta">
+      <span class="pill" id="mode"><span class="dot"></span><span id="modeText">Checking for live AI…</span></span>
+      <span>Built by Brittney Tolbert</span>
+    </div>
+  </header>
+
+  <div class="grid">
+    <section class="panel channel" aria-label="Coach channel">
+      <div class="panel-head"><h2># ai-coach</h2><span class="sub">Ask a question or share a win</span></div>
+      <div class="feed" id="feed" aria-live="polite"></div>
+      <form class="composer" id="composer">
+        <div class="row">
+          <label for="asker">Asking as</label>
+          <select id="asker"></select>
+        </div>
+        <div class="chips" id="suggest"></div>
+        <div class="send">
+          <textarea id="question" rows="2" placeholder="How do I turn my webinar into LinkedIn posts?"></textarea>
+          <button class="primary" id="ask" type="submit">Send</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel" aria-label="Adoption journey">
+      <div class="panel-head"><h2>Adoption journey</h2><span class="sub">Cohort: Lifecycle, Events & Content · 12 marketers</span></div>
+      <div class="panel-body">
+        <div class="stats" id="stats"></div>
+        <div class="stages" id="stages"></div>
+        <p class="note">A shared win moves a person one stage. Anyone flagged as stuck gets a check-in from a human coach.</p>
+      </div>
+    </section>
+  </div>
+
+  <div class="grid2">
+    <section class="panel" aria-label="Needs a human">
+      <div class="panel-head"><h2>Needs a human</h2><span class="sub">Questions the coach couldn't answer</span></div>
+      <div class="panel-body" id="queue"></div>
+    </section>
+
+    <section class="panel" aria-label="Weekly leadership summary">
+      <div class="panel-head"><h2>Friday leadership brief</h2><button class="ghost" id="brief" type="button">Write this week's brief</button></div>
+      <div class="panel-body">
+        <div class="summary" id="summary">Press "Write this week's brief" to summarize the cohort: highlights, who's stuck, patterns worth scaling, and next week's focus.</div>
+      </div>
+    </section>
+  </div>
+
+  <section class="panel" aria-label="How it works">
+    <div class="panel-head"><h2>How it works</h2></div>
+    <div class="panel-body how">
+      <div><b>1 · Ask in the channel</b><p>Marketers ask in plain language. The coach answers from the team's playbook library, tailored to their role.</p></div>
+      <div><b>2 · Track the journey</b><p>Every question and win is logged. People move from awareness to first win, regular use, a transformed workflow, and self-sufficiency.</p></div>
+      <div><b>3 · Route to a human</b><p>No playbook? The coach says so, flags it for a human, and the human's answer becomes a new playbook the whole team can reuse.</p></div>
+      <div><b>4 · Brief leadership</b><p>A weekly summary shows highlights, who needs support, and which patterns to scale across the cohort.</p></div>
+    </div>
+  </section>
+</div>
+
+<script>
+(function () {
+  var STAGES = [
+    { name: "Awareness", hint: "knows the tools exist" },
+    { name: "First win", hint: "one task done with AI" },
+    { name: "Regular use", hint: "AI is part of the week" },
+    { name: "Workflow transformed", hint: "a process rebuilt" },
+    { name: "Self-sufficient", hint: "builds own tools" }
+  ];
+  var cohort = [
+    { id: "priya", name: "Priya Shah", team: "Lifecycle email", stage: 2, q: 6, wins: 3 },
+    { id: "marcus", name: "Marcus Bell", team: "Events", stage: 0, q: 1, wins: 0, stuck: true },
+    { id: "dana", name: "Dana Ortiz", team: "Content", stage: 3, q: 9, wins: 5 },
+    { id: "lee", name: "Lee Park", team: "Content", stage: 1, q: 3, wins: 1 },
+    { id: "sam", name: "Sam Okafor", team: "Lifecycle email", stage: 1, q: 2, wins: 1 },
+    { id: "jo", name: "Jo Rivera", team: "Events", stage: 0, q: 0, wins: 0 },
+    { id: "ana", name: "Ana Lima", team: "Content", stage: 4, q: 12, wins: 8 },
+    { id: "theo", name: "Theo Grant", team: "Lifecycle email", stage: 2, q: 5, wins: 2 },
+    { id: "kim", name: "Kim Nguyen", team: "Events", stage: 1, q: 2, wins: 1, stuck: true },
+    { id: "ravi", name: "Ravi Desai", team: "Content", stage: 2, q: 4, wins: 2 },
+    { id: "elle", name: "Elle Brooks", team: "Lifecycle email", stage: 0, q: 1, wins: 0 },
+    { id: "omar", name: "Omar Haddad", team: "Events", stage: 3, q: 8, wins: 4 }
+  ];
+  var playbooks = [
+    { id: "PB-01", title: "Campaign brief from rough notes", keys: ["brief", "kickoff", "notes", "campaign plan"], steps: "Paste your kickoff notes and the goal. Ask for a one-page brief: audience, message, offer, channels, timeline, success metric. Then ask it to list the open questions you still need answered." },
+    { id: "PB-02", title: "Repurpose a webinar or long post", keys: ["webinar", "repurpose", "linkedin", "social", "posts", "recording", "transcript"], steps: "Upload the transcript. Ask for 5 LinkedIn posts, 1 newsletter blurb and 3 sales talking points, each pointing to one key idea. Have it quote the speaker exactly, then edit for voice." },
+    { id: "PB-03", title: "Subject lines and A/B variants", keys: ["subject", "subject line", "a/b", "ab test", "variant", "email"], steps: "Give the email body and audience. Ask for 10 subject lines across 3 angles (benefit, curiosity, urgency), then pick 2 that differ on one variable only so the test result means something." },
+    { id: "PB-04", title: "Event follow-up at scale", keys: ["event", "follow-up", "follow up", "attendee", "conference", "booth"], steps: "Export the attendee list with session notes. Group people by what they attended. Ask for one follow-up email per group with a personal first line built from their notes. Spot-check 5 before sending." },
+    { id: "PB-05", title: "Brand voice and compliance check", keys: ["brand", "voice", "tone", "compliance", "legal", "review", "guidelines"], steps: "Paste the brand guidelines once into a saved project. Then paste any draft and ask: what breaks our voice, what needs legal review, and a corrected version with changes marked." },
+    { id: "PB-06", title: "Weekly performance summary", keys: ["report", "performance", "dashboard", "metrics", "weekly", "results", "numbers"], steps: "Export last week's campaign numbers. Ask for the three biggest changes, a likely reason for each, and one action. Keep the same prompt every week so the summaries compare cleanly." },
+    { id: "PB-07", title: "Competitor watch", keys: ["competitor", "competition", "pricing page", "market"], steps: "List 5 competitor pages to watch. Each Monday, paste what changed and ask for a 5-line summary: what moved, why it matters to us, and whether anyone should act." },
+    { id: "PB-08", title: "Blog outline from a search topic", keys: ["blog", "seo", "outline", "article", "content plan"], steps: "Give the topic, the reader and the one action you want them to take. Ask for an outline with H2s answering real questions, then draft one section at a time so you stay in control of the argument." }
+  ];
+  var queue = [
+    { id: "Q1", who: "kim", text: "Can the coach pull our event budget from the finance sheet and flag overspend?", at: "Tue" }
+  ];
+  var feed = [
+    { who: "dana", text: "Used the webinar playbook on Tuesday's session. 5 posts drafted in 20 minutes instead of an afternoon." },
+    { bot: true, text: "Huge win, Dana. That's your fifth shared win, so you're now in Workflow transformed. Want to turn your prompt into a template the Content team can reuse?", tags: [["PB-02 · Repurpose a webinar", ""], ["Win logged", "good"]] },
+    { who: "kim", text: "Can the coach pull our event budget from the finance sheet and flag overspend?" },
+    { bot: true, text: "I don't have a playbook for that yet, and it touches finance data, so I've flagged it for a human coach. You'll get an answer here.", tags: [["Flagged for a human", "warn"]] }
+  ];
+  var suggestions = [
+    "How do I turn my webinar into LinkedIn posts?",
+    "Can you help me write subject lines for the December newsletter?",
+    "I used the brief playbook and cut my campaign brief from 3 hours to 40 minutes!",
+    "How do I get AI to sync our event leads into Salesforce automatically?"
+  ];
+
+  var sample = null, live = false, busy = false;
+  var $ = function (id) { return document.getElementById(id); };
+  var byId = function (id) { for (var i = 0; i < cohort.length; i++) if (cohort[i].id === id) return cohort[i]; return null; };
+  var initials = function (n) { return n.split(" ").map(function (p) { return p[0]; }).join("").slice(0, 2); };
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function now() { var d = new Date(); return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }); }
+
+  function renderFeed() {
+    var f = $("feed"); f.textContent = "";
+    feed.forEach(function (m) {
+      var row = el("div", "msg" + (m.bot ? " bot" : ""));
+      var p = m.bot ? null : byId(m.who);
+      row.appendChild(el("div", "avatar", m.bot ? "AI" : initials(p.name)));
+      var body = el("div");
+      var who = el("div", "who", m.bot ? "Adoption Coach" : p.name);
+      who.appendChild(el("span", "", m.bot ? "bot" : p.team));
+      body.appendChild(who);
+      body.appendChild(el("div", "text", m.text));
+      if (m.tags && m.tags.length) {
+        var t = el("div", "tags");
+        m.tags.forEach(function (tg) { t.appendChild(el("span", "tag" + (tg[1] ? " " + tg[1] : ""), tg[0])); });
+        body.appendChild(t);
+      }
+      row.appendChild(body); f.appendChild(row);
+    });
+    f.scrollTop = f.scrollHeight;
+  }
+
+  function renderJourney(movedId) {
+    var s = $("stages"); s.textContent = "";
+    STAGES.forEach(function (st, i) {
+      var people = cohort.filter(function (c) { return c.stage === i; });
+      var row = el("div", "stage");
+      var name = el("div", "stage-name");
+      name.appendChild(el("b", "", st.name + " · " + people.length));
+      name.appendChild(el("small", "", st.hint));
+      var bar = el("div", "bar"); bar.style.background = "var(--s" + i + ")"; bar.style.width = Math.max(8, people.length / cohort.length * 100) + "%";
+      name.appendChild(bar);
+      var wrap = el("div", "people");
+      people.forEach(function (c) {
+        var chip = el("span", "person" + (c.stuck ? " stuck" : "") + (c.id === movedId ? " moved" : ""));
+        chip.title = c.team + " · " + c.q + " questions · " + c.wins + " wins" + (c.stuck ? " · flagged as stuck" : "");
+        chip.appendChild(el("i", "", initials(c.name)));
+        chip.appendChild(document.createTextNode(c.name.split(" ")[0] + (c.stuck ? " ⚑" : "")));
+        wrap.appendChild(chip);
+      });
+      row.appendChild(name); row.appendChild(wrap); s.appendChild(row);
+    });
+    var regular = cohort.filter(function (c) { return c.stage >= 2; }).length;
+    var stats = [
+      [Math.round(regular / cohort.length * 100) + "%", "at regular use or beyond"],
+      [cohort.reduce(function (a, c) { return a + c.wins; }, 0), "wins shared"],
+      [playbooks.length, "playbooks"],
+      [cohort.filter(function (c) { return c.stuck; }).length, "need a check-in"]
+    ];
+    var st = $("stats"); st.textContent = "";
+    stats.forEach(function (x) { var d = el("div", "stat"); d.appendChild(el("b", "", String(x[0]))); d.appendChild(el("span", "", x[1])); st.appendChild(d); });
+  }
+
+  function renderQueue() {
+    var q = $("queue"); q.textContent = "";
+    if (!queue.length) { q.appendChild(el("p", "empty", "Nothing waiting. Every question this week had a playbook.")); return; }
+    queue.forEach(function (item) {
+      var p = byId(item.who);
+      var box = el("div", "q");
+      box.appendChild(el("p", "", "“" + item.text + "”"));
+      box.appendChild(el("small", "", p.name + " · " + p.team + " · " + item.at));
+      var ta = el("textarea"); ta.id = "ans-" + item.id; ta.rows = 2; ta.placeholder = "Your answer. Saving it adds a playbook the coach can reuse.";
+      var lab = el("label", "", "Answer as the human coach"); lab.htmlFor = ta.id;
+      var btn = el("button", "ghost", "Save answer as a playbook"); btn.type = "button";
+      btn.onclick = function () {
+        var a = ta.value.trim(); if (!a) { ta.focus(); return; }
+        var id = "PB-" + String(playbooks.length + 1).padStart(2, "0");
+        var words = item.text.toLowerCase().replace(/[^a-z0-9 ]/g, " ").split(/\s+/).filter(function (w) { return w.length > 4; });
+        playbooks.push({ id: id, title: item.text.replace(/\?$/, "").slice(0, 60), keys: words.slice(0, 6), steps: a });
+        queue = queue.filter(function (x) { return x.id !== item.id; });
+        feed.push({ bot: true, text: p.name.split(" ")[0] + ", a human coach answered your question:\n\n" + a + "\n\nI've saved this as " + id + " so the next person gets it instantly.", tags: [[id + " · new playbook", "good"]] });
+        renderFeed(); renderQueue(); renderJourney();
+      };
+      box.appendChild(lab); box.appendChild(ta); box.appendChild(btn); q.appendChild(box);
+    });
+  }
+
+  // Offline fallback: keyword match against the playbook library
+  function matchPlaybook(text) {
+    var t = text.toLowerCase(), best = null, score = 0;
+    playbooks.forEach(function (pb) {
+      var s = 0; pb.keys.forEach(function (k) { if (t.indexOf(k) !== -1) s += k.length > 6 ? 2 : 1; });
+      if (s > score) { score = s; best = pb; }
+    });
+    return score >= 1 ? best : null;
+  }
+  function looksLikeWin(text) { return /\b(cut|saved|used|shipped|launched|finished|drafted|built)\b/i.test(text) && /(!|minutes|hours|instead|faster|done)/i.test(text); }
+
+  function offlineReply(person, text) {
+    var win = looksLikeWin(text), pb = matchPlaybook(text);
+    var needsSystems = /\b(sync|integrat\w*|connect|api|salesforce|marketo|automatically|pull (our|the)|finance|budget|access)\b/i.test(text);
+    if (!win && needsSystems) return { answer: "Good question. That needs a connection to another system, so I won't guess. I've flagged it for a human coach, and you'll get an answer in this channel.", playbook_id: null, needs_human: true, win: false };
+    if (win) return { answer: "That's a real win, " + person.name.split(" ")[0] + ". I've logged it. Want to share the prompt you used so your teammates can try it?", playbook_id: pb ? pb.id : null, needs_human: false, win: true };
+    if (pb) return { answer: "Here's the " + pb.title.toLowerCase() + " playbook:\n\n" + pb.steps + "\n\nTry it on a real task this week and post the result here.", playbook_id: pb.id, needs_human: false, win: false };
+    return { answer: "I don't have a playbook for that yet, so I've flagged it for a human coach. You'll get an answer in this channel.", playbook_id: null, needs_human: true, win: false };
+  }
+
+  function coachPrompt(person, text) {
+    var lib = playbooks.map(function (p) { return p.id + " | " + p.title + " | " + p.steps; }).join("\n");
+    return "You are the Adoption Coach, an AI coach in a marketing team's Slack channel. Your job is to move each marketer toward using AI by default.\n\n" +
+      "PLAYBOOK LIBRARY (answer ONLY from these):\n" + lib + "\n\n" +
+      "MARKETER: " + person.name + ", " + person.team + ". Current stage: " + STAGES[person.stage].name + " (" + person.q + " questions asked, " + person.wins + " wins shared).\n" +
+      "MESSAGE: " + text + "\n\n" +
+      "Rules:\n- If the message reports a success (time saved, something shipped), treat it as a win: congratulate briefly and ask them to share their prompt or turn it into a reusable template.\n" +
+      "- If a playbook fits, adapt its steps to this person's role in at most 90 words, warm and practical, ending with one small next step.\n" +
+      "- If no playbook fits, or it needs data access, system integrations, or a judgment call, do NOT improvise. Say you've flagged it for a human coach.\n" +
+      "- Plain text only, no markdown symbols.\n\n" +
+      'Reply with only JSON: {"answer": string, "playbook_id": string or null, "needs_human": boolean, "win": boolean}';
+  }
+
+  function applyResult(person, text, r) {
+    var tags = [];
+    person.q += 1;
+    var moved = null;
+    if (r.playbook_id) { var pb = playbooks.filter(function (p) { return p.id === r.playbook_id; })[0]; if (pb) tags.push([pb.id + " · " + pb.title, ""]); }
+    if (r.win) {
+      person.wins += 1; person.stuck = false; tags.push(["Win logged", "good"]);
+      if (person.stage < 4) { person.stage += 1; moved = person.id; tags.push(["Moved to " + STAGES[person.stage].name, "good"]); }
+    }
+    if (r.needs_human) {
+      tags.push(["Flagged for a human", "warn"]);
+      queue.push({ id: "Q" + Date.now(), who: person.id, text: text, at: "Today " + now() });
+    }
+    feed.push({ bot: true, text: String(r.answer || "").trim() || "I've logged that.", tags: tags });
+    renderFeed(); renderJourney(moved); renderQueue();
+  }
+
+  function ask(evt) {
+    if (evt) evt.preventDefault();
+    if (busy) return;
+    var text = $("question").value.trim(); if (!text) { $("question").focus(); return; }
+    var person = byId($("asker").value);
+    feed.push({ who: person.id, text: text });
+    feed.push({ bot: true, text: "Thinking…", pending: true });
+    renderFeed();
+    $("question").value = ""; busy = true; $("ask").disabled = true;
+    var done = function (r) { feed = feed.filter(function (m) { return !m.pending; }); applyResult(person, text, r); busy = false; $("ask").disabled = false; };
+    if (!live) { setTimeout(function () { done(offlineReply(person, text)); }, 500); return; }
+    sample.json(coachPrompt(person, text), { modelTier: "quick", cache: false })
+      .then(function (r) {
+        if (!r || typeof r.answer !== "string") r = offlineReply(person, text);
+        r.needs_human = !!r.needs_human; r.win = !!r.win;
+        done(r);
+      })
+      .catch(function (e) {
+        if (e && (e.code === "not_granted" || e.code === "sampling_disabled" || e.code === "capability_disabled" || e.code === "not_declared")) setMode(false);
+        done(offlineReply(person, text));
+      });
+  }
+
+  function cohortData() {
+    return cohort.map(function (c) { return c.name + " (" + c.team + "): " + STAGES[c.stage].name + ", " + c.q + " questions, " + c.wins + " wins" + (c.stuck ? ", FLAGGED STUCK" : ""); }).join("\n");
+  }
+  function offlineBrief() {
+    var stuck = cohort.filter(function (c) { return c.stuck; });
+    var top = cohort.slice().sort(function (a, b) { return b.wins - a.wins; }).slice(0, 2);
+    var regular = cohort.filter(function (c) { return c.stage >= 2; }).length;
+    var lines = [
+      "HIGHLIGHTS",
+      "• " + regular + " of " + cohort.length + " marketers (" + Math.round(regular / cohort.length * 100) + "%) now use AI as part of their regular week.",
+      "• " + top.map(function (c) { return c.name.split(" ")[0]; }).join(" and ") + " lead the cohort with " + top[0].wins + " and " + top[1].wins + " shared wins.",
+      "• " + playbooks.length + " playbooks in the library; webinar repurposing is the most reused.",
+      "",
+      "NEEDS SUPPORT",
+      stuck.length ? stuck.map(function (c) { return "• " + c.name + " (" + c.team + ") is stuck at " + STAGES[c.stage].name + ". Book a 20-minute build session on a real task."; }).join("\n") : "• No one is flagged as stuck.",
+      queue.length ? "• " + queue.length + " question(s) waiting on a human answer." : "• No questions waiting on a human.",
+      "",
+      "PATTERNS TO SCALE",
+      "• Events has the most people early in the journey. Pair them with Omar, who already transformed his event follow-up.",
+      "• Content's repurposing template works. Package it for Lifecycle email.",
+      "",
+      "NEXT WEEK",
+      "• Run one hands-on session for Events. Goal: every Events marketer logs a first win."
+    ];
+    return lines.join("\n");
+  }
+  function brief() {
+    var out = $("summary"), btn = $("brief");
+    if (!live) { out.textContent = offlineBrief(); return; }
+    btn.disabled = true; out.textContent = "Thinking…";
+    var prompt = "Write a Friday leadership brief about an AI adoption program for a marketing cohort. Audience: the VP of Marketing. Plain text, no markdown symbols except • bullets. Sections in caps: HIGHLIGHTS, NEEDS SUPPORT, PATTERNS TO SCALE, NEXT WEEK. Two to three bullets each, specific, using names and numbers from the data. Under 200 words.\n\n" +
+      "Stages in order: " + STAGES.map(function (s) { return s.name; }).join(" > ") + "\n\nCOHORT:\n" + cohortData() +
+      "\n\nOPEN QUESTIONS WAITING ON A HUMAN: " + (queue.map(function (q) { return q.text; }).join(" | ") || "none") +
+      "\n\nPLAYBOOKS: " + playbooks.map(function (p) { return p.title; }).join("; ");
+    sample(prompt, { cache: false, onText: function (u) { out.textContent = u.text; } })
+      .then(function (r) { out.textContent = r.text; })
+      .catch(function (e) { out.textContent = offlineBrief(); if (e && e.code === "not_granted") setMode(false); })
+      .then(function () { btn.disabled = false; });
+  }
+
+  function setMode(on) {
+    live = on;
+    $("mode").classList.toggle("live", on);
+    $("modeText").textContent = on ? "Live AI: answers written by Claude" : "Demo mode: answers from the playbook library";
+  }
+
+  // Init
+  cohort.forEach(function (c) { var o = el("option", "", c.name + " · " + c.team); o.value = c.id; $("asker").appendChild(o); });
+  $("asker").value = "marcus";
+  suggestions.forEach(function (s) { var b = el("button", "chip", s); b.type = "button"; b.onclick = function () { $("question").value = s; $("question").focus(); }; $("suggest").appendChild(b); });
+  $("composer").addEventListener("submit", ask);
+  $("question").addEventListener("keydown", function (e) { if (e.key === "Enter" && !e.shiftKey) { ask(e); } });
+  $("brief").onclick = brief;
+  renderFeed(); renderJourney(); renderQueue(); setMode(false);
+  $("modeText").textContent = "Checking for live AI…";
+  if (window.claude && window.claude.use) {
+    window.claude.use("sample").then(function (s) { sample = s; setMode(!!s); }).catch(function () { setMode(false); });
+  } else { setMode(false); }
+})();
+</script>
